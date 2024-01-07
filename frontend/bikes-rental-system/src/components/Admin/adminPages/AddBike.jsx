@@ -23,7 +23,7 @@ const AddBike = () => {
   const [isnewBikeAdded, setIsNewBikeAdded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { badgeCount, incrementBadgeCount, resetBadgeCount } = useBadge();
+  const { badgeCount, incrementBadgeCount } = useBadge();
 
   useEffect(() => {
     const getAllBikeTypes = async () => {
@@ -36,10 +36,10 @@ const AddBike = () => {
     getAllBikeTypes();
   }, [isnewBikeAdded]);
 
-  function checkBikeAdded() {
+  const checkBikeAdded = () => {
     setIsNewBikeAdded((isAdded) => !isAdded);
     incrementBadgeCount();
-  }
+  };
 
   if (isLoading) {
     return <Loading />;

@@ -5,14 +5,14 @@ import { Grid } from "@mui/material";
 import Box from "@mui/material/Box";
 
 const Notifications = () => {
-  const { badgeCount, resetBadgeCount } = useBadge();
+  const { badgeCount } = useBadge();
   return (
     <Grid container spacing={4} justifyContent="center">
       <Grid item xs={12}>
         <HeaderBar headTitle={"Notifications"} badgeContent={badgeCount} />
       </Grid>
       <Box mt={4} display="flex" justifyContent="center" width="500px">
-        <Notification resetBadgeCount={resetBadgeCount} />
+        <Notification />
       </Box>
     </Grid>
   );

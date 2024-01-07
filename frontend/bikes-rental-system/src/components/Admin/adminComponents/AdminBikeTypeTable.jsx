@@ -16,7 +16,6 @@ import {
   GridActionsCellItem,
   GridRowEditStopReasons
 } from "@mui/x-data-grid";
-import { clearNotifications } from "../../../utils/NotificationsUtils";
 
 function EditToolbar() {
   return (
@@ -61,7 +60,6 @@ function AdminBikeTypeTable({ bikeTypeData }) {
       }
       setBikeToDelete({});
       setIsModalOpen(false);
-      clearNotifications();
     }
   };
 

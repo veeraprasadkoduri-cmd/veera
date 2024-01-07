@@ -59,7 +59,7 @@ const AddBikeForm = ({ checkBikeAdded }) => {
         resetForm();
         addNotification("New BikeType", bikeData);
         showAlert(`${responseData?.successMessage}`, "success");
-        checkBikeAdded(bikeData);
+        checkBikeAdded();
       }
     }
   });
@@ -101,6 +101,7 @@ const AddBikeForm = ({ checkBikeAdded }) => {
                   name="bikeType"
                   id="bikeType"
                   label="Type Classic, Electric, Scooter"
+                  autoFocus
                   onChange={formik.handleChange}
                   value={formik.values.bikeType}
                   {...formik.getFieldProps("bikeType")}

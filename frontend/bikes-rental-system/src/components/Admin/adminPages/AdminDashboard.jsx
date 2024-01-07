@@ -2,7 +2,6 @@
 import Cards from "../adminComponents/Cards";
 import ChartCard from "../adminComponents/ChartCard";
 import useFetch from "../../../Context/useFetch";
-import { useBadge } from "../../../Context/useBadge";
 import {
   AppBar,
   Box,
@@ -24,6 +23,7 @@ import DirectionsBikeOutlinedIcon from "@mui/icons-material/DirectionsBikeOutlin
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import BikeScooterIcon from "@mui/icons-material/BikeScooter";
 import UpdateIcon from "@mui/icons-material/Update";
+import { useBadge } from "../../../Context/useBadge";
 import {
   SearchInput,
   SearchIconWrapper,
@@ -55,6 +55,8 @@ const AdminDashboard = () => {
     invoiceErrors
   } = useFetch("/api/v1/invoices/InvoicesCountAndSum");
 
+  const { badgeCount } = useBadge();
+
   const styles = {
     color: "white",
     height: "100%"
@@ -75,8 +77,6 @@ const AdminDashboard = () => {
   const dateRangeIcon = <DateRangeIcon />;
   const bikeScooterIcon = <BikeScooterIcon />;
   const updateIcon = <UpdateIcon />;
-
-  const { badgeCount, incrementBadgeCount, resetBadgeCount } = useBadge();
 
   const cardData = [
     {
@@ -174,7 +174,7 @@ const AdminDashboard = () => {
             aria-label="show 17 new notifications"
             color="inherit"
           >
-            <Badge badgeContent={badgeCount} color="error">
+            <Badge color="error" badgeContent={badgeCount}>
               <NotificationsIcon />
             </Badge>
           </IconButton>

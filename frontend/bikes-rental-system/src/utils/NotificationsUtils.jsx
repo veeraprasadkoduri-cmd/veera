@@ -8,11 +8,13 @@ const getNotifications = () => {
   return storedNotifications;
 };
 
-const addNotification = (message, data) => {
+const addNotification = (message, { bikeType, info, price }) => {
   const newNotifications = {
     id: uuidv4(),
     message,
-    data,
+    bikeType,
+    info,
+    price,
     time: ` ${formatDate(new Date())} - ${formatTime(new Date())}`
   };
 

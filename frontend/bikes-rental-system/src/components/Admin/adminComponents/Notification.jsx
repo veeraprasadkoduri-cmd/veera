@@ -6,21 +6,32 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { getNotifications } from "../../../utils/NotificationsUtils";
-import { useEffect } from "react";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import IconButton from "@mui/material/IconButton";
+import { useState } from "react";
 
 const noNotificationsStyle = {
   marginTop: "3rem",
   fontSize: "2rem"
 };
 
-const Notification = ({ resetBadgeCount }) => {
-  const availableNotifications = getNotifications();
+//const availableNotifications = getNotifications();
 
-  useEffect(() => {
-    resetBadgeCount();
-  }, [resetBadgeCount]);
+const Notification = () => {
+  const [notifications, setNotifications] = useState(getNotifications());
 
-  if (availableNotifications.length === 0) {
+  if (notifications) {
+    console.log("availableNotifications ", notifications);
+  }
+
+  const handleDelete = (id) => {
+    const updatedNotifications = notifications.filter((bike) => bike.id !== id);
+    setNotifications(updatedNotifications);
+    localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
+    console.log(`deleted id ${id}`);
+  };
+
+  if (notifications.length === 0) {
     return (
       <Box component="h4" className={noNotificationsStyle}>
         🙁 You have no new notifications!
@@ -30,13 +41,14 @@ const Notification = ({ resetBadgeCount }) => {
 
   return (
     <List sx={{ width: "100%" }}>
-      {availableNotifications?.map((bikeType) => {
+      {notifications?.map((bikeType) => {
         return (
           <ListItem
             key={bikeType.id}
             alignItems="center"
             sx={{
-              border: "1px solid green"
+              border: "1px solid green",
+              marginTop: "1rem"
             }}
           >
             <ListItemAvatar>
@@ -55,9 +67,9 @@ const Notification = ({ resetBadgeCount }) => {
                     variant="body2"
                     color="text.primary"
                   >
-                    {bikeType.data.bikeType}
+                    {bikeType.bikeType}
                   </Typography>
-                  price / hour - {bikeType.data.price + "$"}
+                  price / hour - {bikeType.price + "$"}
                   <Typography
                     sx={{ display: "block", marginTop: "0.3rem" }}
                     component="span"
@@ -70,6 +82,9 @@ const Notification = ({ resetBadgeCount }) => {
                 </>
               }
             />
+            <IconButton size="large" onClick={() => handleDelete(bikeType.id)}>
+              <DeleteOutlineIcon />
+            </IconButton>
           </ListItem>
         );
       })}
