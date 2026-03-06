@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_HUB_REPO = 'veeradockerhub/bikerentalmultistage'
+        IMAGE_TAG = 'latest'
+    }
+
     stages {
 
         stage('Clone Code') {
@@ -25,5 +30,28 @@ pipeline {
             }
         }
 
+        stage('Build Docker Image') {
+            steps {
+                dir('frontend/bikes-rental-system') {
+                    // Build the Docker image
+                    sh "docker build -t $DOCKER_HUB_REPO:$IMAGE_TAG ."
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                    sh "docker push $DOCKER_HUB_REPO:$IMAGE_TAG"
+                }
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh "docker run -d -p 91:80 --name bikerental-frontend $DOCKER_HUB_REPO:$IMAGE_TAG"
+            }
+        }
     }
 }
