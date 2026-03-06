@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Clone Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/veeraprasadkoduri-cmd/veera.git'
+            }
+        }
+
+        stage('Install Backend Dependencies') {
+            steps {
+                sh '''
+                cd backend
+                npm install
+                '''
+            }
+        }
+
+        stage('Install Frontend Dependencies') {
+            steps {
+                sh '''
+                cd frontend/bikes-rental-system
+                npm install
+                '''
+            }
+        }
+
+        stage('Start Application') {
+            steps {
+                sh 'nohup npm start &'
+            }
+        }
+
+    }
+}
