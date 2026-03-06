@@ -11,25 +11,17 @@ pipeline {
 
         stage('Install Backend Dependencies') {
             steps {
-                sh '''
-                cd backend
-                npm install
-                '''
+                dir('backend') {
+                    sh 'npm install'
+                }
             }
         }
 
         stage('Install Frontend Dependencies') {
             steps {
-                sh '''
-                cd frontend/bikes-rental-system
-                npm install
-                '''
-            }
-        }
-
-        stage('Start Application') {
-            steps {
-                sh 'nohup npm start &'
+                dir('frontend/bikes-rental-system') {
+                    sh 'npm install'
+                }
             }
         }
 
