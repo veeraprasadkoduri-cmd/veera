@@ -2,63 +2,33 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = "veeradockerhub/bikerentalmultistage"
-        IMAGE_TAG = "latest"
-        CONTAINER_NAME = "bikerental-frontend"
+        IMAGE_NAME = "bikerental-app"
+        CONTAINER_NAME = "bikerental-container"
     }
 
     stages {
 
-        stage('Verify Files') {
+        stage('Clone Code') {
             steps {
-                sh '''
-                echo "Current directory:"
-                pwd
-                echo "Files in workspace:"
-                ls -la
-                '''
+                git branch: 'main', url: 'https://github.com/veeraprasadkoduri-cmd/veera.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${DOCKER_HUB_REPO}:${IMAGE_TAG} ."
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
-        stage('Push to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub-cred',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push $DOCKER_HUB_REPO:$IMAGE_TAG
-                    '''
-                }
-            }
-        }
-
-        stage('Deploy Container') {
+        stage('Run Container') {
             steps {
                 sh '''
                 docker stop $CONTAINER_NAME || true
                 docker rm $CONTAINER_NAME || true
-                docker run -d -p 91:80 --name $CONTAINER_NAME $DOCKER_HUB_REPO:$IMAGE_TAG
+                docker run -d -p 91:80 --name $CONTAINER_NAME $IMAGE_NAME
                 '''
             }
         }
 
-    }
-
-    post {
-        success {
-            echo "Pipeline completed successfully 🚀"
-        }
-        failure {
-            echo "Pipeline failed ❌"
-        }
     }
 }
