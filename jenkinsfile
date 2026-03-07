@@ -17,8 +17,12 @@ pipeline {
 
         stage('Verify Files') {
             steps {
-                sh 'pwd'
-                sh 'ls -l'
+                sh '''
+                echo "Current directory:"
+                pwd
+                echo "Files in workspace:"
+                ls -la
+                '''
             }
         }
 
@@ -35,7 +39,6 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-
                     sh '''
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     docker push $DOCKER_HUB_REPO:$IMAGE_TAG
@@ -57,7 +60,7 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline completed successfully 🚀"
+            echo "CI/CD Pipeline completed successfully 🚀"
         }
         failure {
             echo "Pipeline failed ❌"
