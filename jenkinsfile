@@ -2,47 +2,41 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "veeradockerhub/bikerental-app"
+        IMAGE_NAME = "bikerental-app"
         CONTAINER_NAME = "bikerental-container"
-        DOCKER_HUB_CREDENTIALS = "dockerhub-creds" // Add your Jenkins DockerHub credentials ID
+        FRONTEND_PORT = "3000"
+        BACKEND_PORT = "3001"
     }
 
     stages {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/veeraprasadkoduri-cmd/veera.git'
+                git branch: 'main',
+                    url: 'https://github.com/veeraprasadkoduri-cmd/veera.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${IMAGE_NAME}:latest ."
-                }
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            when {
-                expression { env.DOCKER_HUB_CREDENTIALS != null }
-            }
-            steps {
-                script {
-                    sh "echo \$DOCKER_HUB_PASSWORD | docker login -u \$DOCKER_HUB_USERNAME --password-stdin"
-                    sh "docker push ${IMAGE_NAME}:latest"
-                }
-            }
-        }
-
-        stage('Run Container') {
-            steps {
-                script {
-                    // Stop & remove existing container if exists
                     sh """
-                        docker stop ${CONTAINER_NAME} || true
-                        docker rm ${CONTAINER_NAME} || true
-                        docker run -d -p 3000:3000 -p 3001:3001 --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+                        docker build -t $IMAGE_NAME:latest .
+                    """
+                }
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                script {
+                    sh """
+                        # Stop & remove old container if exists
+                        docker stop $CONTAINER_NAME || true
+                        docker rm $CONTAINER_NAME || true
+
+                        # Run new container
+                        docker run -d -p $FRONTEND_PORT:3000 -p $BACKEND_PORT:3001 --name $CONTAINER_NAME $IMAGE_NAME:latest
                     """
                 }
             }
@@ -52,7 +46,7 @@ pipeline {
 
     post {
         success {
-            echo "🚀 Bikerental app deployed successfully!"
+            echo "✅ Deployment successful! Frontend: http://<EC2-IP>:$FRONTEND_PORT | Backend: http://<EC2-IP>:$BACKEND_PORT"
         }
         failure {
             echo "❌ Pipeline failed!"
