@@ -2,12 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = 'veeradockerhub/bikerental-app'
-        IMAGE_TAG = 'latest'
-        CONTAINER_NAME = 'bikerental-container'
+        IMAGE_NAME = "veeradockerhub/bikerental-app"
+        CONTAINER_NAME = "bikerental-container"
+        DOCKER_HUB_CREDENTIALS = "dockerhub-creds" // Add your Jenkins DockerHub credentials ID
     }
 
     stages {
+
         stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/veeraprasadkoduri-cmd/veera.git'
@@ -16,33 +17,45 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t $DOCKER_HUB_REPO:$IMAGE_TAG ."
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub-cred',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push $DOCKER_HUB_REPO:$IMAGE_TAG
-                    '''
+                script {
+                    sh "docker build -t ${IMAGE_NAME}:latest ."
                 }
             }
         }
 
-        stage('Deploy Container') {
-            steps {
-                sh '''
-                docker stop $CONTAINER_NAME || true
-                docker rm $CONTAINER_NAME || true
-                docker run -d -p 91:3000 --name $CONTAINER_NAME $DOCKER_HUB_REPO:$IMAGE_TAG
-                '''
+        stage('Push to Docker Hub') {
+            when {
+                expression { env.DOCKER_HUB_CREDENTIALS != null }
             }
+            steps {
+                script {
+                    sh "echo \$DOCKER_HUB_PASSWORD | docker login -u \$DOCKER_HUB_USERNAME --password-stdin"
+                    sh "docker push ${IMAGE_NAME}:latest"
+                }
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                script {
+                    // Stop & remove existing container if exists
+                    sh """
+                        docker stop ${CONTAINER_NAME} || true
+                        docker rm ${CONTAINER_NAME} || true
+                        docker run -d -p 3000:3000 -p 3001:3001 --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+                    """
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "🚀 Bikerental app deployed successfully!"
+        }
+        failure {
+            echo "❌ Pipeline failed!"
         }
     }
 }
