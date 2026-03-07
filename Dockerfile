@@ -1,33 +1,18 @@
-# ---------- Stage 1 : Build ----------
-FROM node:18 AS builder
+# Use Node 18 as base image
+FROM node:18
 
+# Set working directory
 WORKDIR /app
 
-# copy root package.json
+# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# copy project
+# Copy the entire project
 COPY . .
 
-# install frontend dependencies
-WORKDIR /app/frontend/bikes-rental-system
-RUN npm install
-
-# install backend dependencies
-WORKDIR /app/backend
-RUN npm install
-
-
-# ---------- Stage 2 : Runtime ----------
-FROM node:18-slim
-
-WORKDIR /app
-
-# copy built project from builder
-COPY --from=builder /app /app
-
+# Expose port (frontend runs on 3000 by default)
 EXPOSE 3000
-EXPOSE 5000
 
-CMD ["npm","start"]
+# Start both frontend and backend
+CMD ["npm", "start"]
