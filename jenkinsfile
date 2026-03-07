@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "bikerental-app"
         CONTAINER_NAME = "bikerental-container"
+        PORT = "91"
     }
 
     stages {
@@ -16,19 +17,36 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                sh '''
+                docker build -t $IMAGE_NAME .
+                '''
+            }
+        }
+
+        stage('Stop Old Container') {
+            steps {
+                sh '''
+                docker stop $CONTAINER_NAME || true
+                docker rm $CONTAINER_NAME || true
+                '''
             }
         }
 
         stage('Run Container') {
             steps {
                 sh '''
-                docker stop $CONTAINER_NAME || true
-                docker rm $CONTAINER_NAME || true
-                docker run -d -p 91:80 --name $CONTAINER_NAME $IMAGE_NAME
+                docker run -d -p $PORT:3000 --name $CONTAINER_NAME $IMAGE_NAME
                 '''
             }
         }
+    }
 
+    post {
+        success {
+            echo "Deploy Success 🚀"
+        }
+        failure {
+            echo "Pipeline Failed ❌"
+        }
     }
 }
