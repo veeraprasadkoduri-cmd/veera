@@ -6,14 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "start:frontend": "cd frontend/bikes-rental-system && npm start",
-    "start:backend": "cd backend && npm start"
+    "start:frontend": "cd frontend-app && npm start",
+    "start:backend": "cd backend && nodemon node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.2"
   },
   "dependencies": {
     "uuid": "^9.0.1"
