@@ -19,16 +19,12 @@ pipeline {
             steps {
                 sh 'pwd'
                 sh 'ls -l'
-                sh 'ls -l frontend'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                dir('frontend/bikes-rental-system') {
-                    sh 'ls -l'
-                    sh "docker build -t ${DOCKER_HUB_REPO}:${IMAGE_TAG} ."
-                }
+                sh "docker build -t ${DOCKER_HUB_REPO}:${IMAGE_TAG} ."
             }
         }
 
@@ -57,7 +53,6 @@ pipeline {
                 '''
             }
         }
-
     }
 
     post {
