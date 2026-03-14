@@ -1,0 +1,30 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;1,300&family=Montserrat+Alternates&family=Montserrat:ital,wght@0,300;1,200&family=Questrial&family=Roboto+Serif:ital,opsz,wght@1,8..144,200&family=Roboto:wght@300&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
+}
+
+.css-1ghiiio-MuiButtonBase-root-MuiButton-root:hover {
+  color: white;
+}
+
+.navbar {
+  background: #282a36;
+}
+
+.brand,
+.list_item {
+  color: #fff !important;
+  margin-left: 10px;
+}
+
+.list_item:hover {
+  color: tomato !important;
+}
+
+.navbar-toggler {
+  background-color: #0d6efd !important;
+}
