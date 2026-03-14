@@ -1,8 +1,14 @@
-const DB_NAME = process.env.DB_NAME || "veeradb";
-const DB_USERNAME = process.env.DB_USERNAME || "root";
-const DB_PASSWORD = process.env.DB_PASSWORD || "Root@123";
-const DB_SERVER = process.env.DB_SERVER || "localhost";
+const DB_NAME = "test_sequelizer";
+const DB_USERNAME = "root";
+const DB_PASSWORD = "asd123";
+const DB_SERVER = "localhost";
 
+// const DB_NAME = "sql11657710";
+// const DB_SERVER = "sql11.freesqldatabase.com";
+// const DB_USERNAME = "sql11657710";
+// const DB_PASSWORD = "63JxIF6YfQ";
+
+//this will exclude default created columns such as createdAt and updatedAt
 const attributes = { exclude: ["createdAt", "updatedAt"] };
 
 module.exports = {
